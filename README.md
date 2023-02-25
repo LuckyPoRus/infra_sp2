@@ -9,10 +9,13 @@
 - Django - 2.2.16
 - Django Rest Framework - 3.12.4
 - Python 3.7
+- Docker
+- Gunicorn
+- Nginx
 ## Как запустить проект:
 1. Клонировать репозиторий и перейти в него в командной строке:
 ```
-git@github.com:LuckyPoRus/api_yamdb.git
+git clone git@github.com:LuckyPoRus/infra_sp2.git
 ```
 2. Переход в директорию с проектом:
 ```
@@ -34,13 +37,36 @@ python -m pip install --upgrade pip
 ```
 pip install -r requirements.txt
 ```
-7. Выполнить миграции:
+7. Переходим в папку с файлом docker-compose.yaml:
 ```
-python manage.py migrate
+cd infra
 ```
-8. Запустить проект:
+8. Поднимаем контейнеры (infra_db_1, infra_web_1, infra_nginx_1):
 ```
-python manage.py runserver
+docker-compose up -d --build
+```
+9. Выполняем миграции:
+```
+docker-compose exec web python manage.py makemigrations
+```
+```
+docker-compose exec web python manage.py migrate
+```
+10. Создаем суперпользователя:
+```
+docker-compose exec web python manage.py createsuperuser
+```
+11. Собираем статику:
+```
+docker-compose exec web python manage.py collectstatic --no-input
+```
+12. Создаем дамп базы данных:
+```
+docker-compose exec web python manage.py dumpdata > dumpPostrgeSQL.json
+```
+13. Останавливаем контейнеры:
+```
+docker-compose down -v
 ```
 
 ## Регистрация нового пользователя
