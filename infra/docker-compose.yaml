@@ -1,13 +1,19 @@
 
 version: '3.8'
 
+volumes:
+  db_value:
+  static_value:
+  media_value:
+
+
 services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - /var/lib/postgresql/data/
+      - db_value:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - .env
   web:
     build: ../api_yamdb
     restart: always
@@ -17,7 +23,7 @@ services:
     depends_on:
       - db
     env_file:
-      - ./.env
+      - .env
 
   nginx:
     image: nginx:1.21.3-alpine
@@ -29,7 +35,3 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - web
-
-volumes:
-  static_value:
-  media_value:
